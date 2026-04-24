@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MongoDB CRUD Operations + Postman Testing</title>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 40px;
+            background-color: #f4f4f4;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        pre {
+            background: #222;
+            color: #0f0;
+            padding: 15px;
+            overflow-x: auto;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>MongoDB CRUD Operations + Postman Testing</h1>
+
+    <h2>📌 Introduction</h2>
+    <p>
+        MongoDB is a NoSQL database that stores data in JSON-like documents.
+        CRUD operations refer to Create, Read, Update, and Delete operations.
+    </p>
+
+    <h2>⚙️ Backend Setup (Node.js + Express)</h2>
+    <pre>
+npm init -y
+npm install express mongoose body-parser
+    </pre>
+
+    <h2>📄 Server Code</h2>
+    <pre>
+const express = require('express');
+const mongoose = require('mongoose');
+
+const app = express();
+app.use(express.json());
+
+// Connect MongoDB
+mongoose.connect('mongodb://127.0.0.1:27017/studentDB');
+
+// Schema
+const Student = mongoose.model('Student', {
+    name: String,
+    age: Number,
+    course: String
+});
+
+// CREATE
+app.post('/add', async (req, res) => {
+    const student = new Student(req.body);
+    await student.save();
+    res.send("Student Added");
+});
+
+// READ
+app.get('/students', async (req, res) => {
+    const data = await Student.find();
+    res.json(data);
+});
+
+// UPDATE
+app.put('/update/:id', async (req, res) => {
+    await Student.findByIdAndUpdate(req.params.id, req.body);
+    res.send("Updated Successfully");
+});
+
+// DELETE
+app.delete('/delete/:id', async (req, res) => {
+    await Student.findByIdAndDelete(req.params.id);
+    res.send("Deleted Successfully");
+});
+
+app.listen(3000, () => console.log("Server running on port 3000"));
+    </pre>
+
+    <h2>📬 Postman Testing</h2>
+
+    <h3>1. Create Data</h3>
+    <pre>
+POST http://localhost:3000/add
+Body (JSON):
+{
+    "name": "John",
+    "age": 22,
+    "course": "BTech"
+}
+    </pre>
+
+    <h3>2. Read Data</h3>
+    <pre>
+GET http://localhost:3000/students
+    </pre>
+
+    <h3>3. Update Data</h3>
+    <pre>
+PUT http://localhost:3000/update/{id}
+Body:
+{
+    "age": 23
+}
+    </pre>
+
+    <h3>4. Delete Data</h3>
+    <pre>
+DELETE http://localhost:3000/delete/{id}
+    </pre>
+
+    <h2>🎯 Conclusion</h2>
+    <p>
+        CRUD operations in MongoDB can be easily implemented using Node.js and Express.
+        Postman helps in testing APIs efficiently.
+    </p>
+</div>
+
+</body>
+</html>
